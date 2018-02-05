@@ -4,39 +4,65 @@
 <style type="text/css" href="project0.css"></style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
 </head>
 
 <body>
-	<div id="partOne">
+    <div id="partOne">
         <h1>Part One: </h1>
-        I've made a change!
-	</div>
+    </div>
     
     <div id="partTwo">
         <h1>Part Two: </h1>
         <div id="barchart">
         </div>
-	</div>
+    </div>
     
     <div id="partThree">
         <h1>Part Three &amp; Four: </h1>
         <div id="scatterplot">
             <p id="scatterLabel"></p>
         </div>
-	</div>
+    </div>
     
     <div id="partFive">
         <h1>Part Five: </h1>
         <div id="scatterplotSet">
         </div>
-	</div>
+    </div>
     
     <script type="text/javascript">
         // Put your part one code here ***********************
+        var anscombe_1 = []
+        var anscombe_2 = []
+        var anscombe_3 = []
+        var anscombe_4 = []
 
-        
+        d3.csv("/data/anscombe_I.csv", function(row) {
+            anscombe_1.push(row) 
+        }).then(function(){
+            checkDataset(anscombe_1)
+        });
+
+        d3.csv("/data/anscombe_II.csv", function(row) {
+            anscombe_2.push(row) 
+        }).then(function(){
+        checkDataset(anscombe_2)
+        });
+
+        d3.csv("/data/anscombe_III.csv", function(row) { 
+            anscombe_3.push(row)
+        }).then(function(){
+            checkDataset(anscombe_3)
+        });
+
+        d3.csv("/data/anscombe_IV.csv", function(row) {
+            anscombe_4.push(row)
+        }).then(function(){
+            checkDataset(anscombe_4)
+        });
+
         // Leave this to test your data uploading. All data uploading should be above this line
         function checkDataset(dataset) {
             if (dataset.length == 11)
