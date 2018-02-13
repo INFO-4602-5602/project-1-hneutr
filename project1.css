@@ -36,3 +36,12 @@ body {
   text-align: center;
   pointer-events: none;
 }
+
+.stacked {
+    position: absolute;
+}
+
+#transitions {
+    width: 500;
+    height: 500;
+}
