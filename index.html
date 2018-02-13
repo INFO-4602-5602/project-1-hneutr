@@ -1,16 +1,30 @@
 <html>
 <head>
 <title>Project 0</title>
-<style type="text/css" href="project1.css"></style>
+<link type="text/css" href="project1.css" rel="stylesheet"></link>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
 <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 
 <!--Put your D3 import statement between these two lines-->
+<!-- 
+CITATIONS and help:
+-->
 </head>
 
 <body>
+    <div id="acknowledgements">
+        <h2>Acknowledgements and resources</h2>
+        <ul>
+            <li><a href="https://bl.ocks.org/pstuffa/26363646c478b2028d36e7274cedefa6"><span>for line graphs</span></a></li>
+            <li><a href="https://github.com/d3/d3/issues/2912"><span>for help with converting to numbers</span></a></li>
+            <li><a href="http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774"><span>for help with mouseovers</span></a></li>
+            <li><a href="http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html"> <span>for help with titles</span></a></li>
+            <li><a href="http://bl.ocks.org/Caged/6476579"><span>for help with tooltips</span></a></li>
+            <li><a href="https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73"> <span>for more help with tooltips</span> </a></li>
+        </ul>
+    </div>
     <div id="partOne">
         <h1>Part One: </h1>
     </div>
@@ -31,75 +45,120 @@
     <div id="partFive">
         <h1>Part Five: </h1>
         <div id="scatterplotSet">
+            <div id="p5_plot_1"></div>
+            <div id="p5_plot_2"></div>
+            <div id="p5_plot_3"></div>
+            <div id="p5_plot_4"></div>
         </div>
     </div>
     
     <script type="text/javascript">
         // Put your part one code here ***********************
-        d3.csv("/data/anscombe_I.csv", function(data) {
-            checkDataset(data)
-        });
-
-        d3.csv("/data/anscombe_II.csv", function(data) {
-            checkDataset(data)
-        });
-
-        d3.csv("/data/anscombe_III.csv", function(data) {
-            checkDataset(data)
-        });
-
-        d3.csv("/data/anscombe_IV.csv", function(data) {
-            checkDataset(data)
-        });
-
+        d3.csv("/data/anscombe_I.csv", checkDataset);
+        d3.csv("/data/anscombe_II.csv", checkDataset);
+        d3.csv("/data/anscombe_III.csv", checkDataset);
+        d3.csv("/data/anscombe_IV.csv", checkDataset);
+    
         // Leave this to test your data uploading. All data uploading should be above this line
         function checkDataset(dataset) {
             if (dataset.length == 11)
                 $("#partOne").append("<p>data loaded correctly</p>");
             else
-                $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
+                $("#partOne").append("<p>data loaded incorrectly.</p>");
         }
         
-        // Put your part two code here ***********************
-        var xVal = "x"; // Value to plot on x-axis
-        var yVal = "y"; // Value to plot on y-axis
+        var xVal = "x";
+        var yVal = "y";
+        var getX = function(d) { return +d[xVal]; };
+        var getY = function(d) { return +d[yVal]; };
+        var getScaledX = function(d) { return x(d[xVal]); };
+        var getScaledY = function(d) { return y(d[yVal]); };
 
         // set the dimensions and margins of the graph
-        var margin = {top: 20, right: 20, bottom: 30, left: 50};
-        var width = 960 - margin.left - margin.right;
-        var height = 500 - margin.top - margin.bottom;
+        var margin = {top: 20, right: 20, bottom: 20, left: 20};
+        var width = 400 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
 
-        var svg = d3.select("#partThree").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
-
-        // set the ranges
-        var x = d3.scaleLinear()
-            .range([0, width]);
-        var y = d3.scaleLinear()
-            .range([height, 0]);
-
-        var xLabel = svg.append("text")
-            .attr("class", "label")
-            .text(xVal)
-            .attr("x", width - 20)
-            .attr("y", height - 10);
-
-        var yLabel = svg.append("text")
-            .attr("class", "label")
-            .text(yVal)
-            .attr("y", - 10)
-
+        // Put your part two code here ***********************
         d3.csv("/data/anscombe_III.csv", function(error, data) {
             if (error) throw error;
 
-            // Scale the range of the data
-            x.domain(d3.extent(data, function(d){return +d[xVal];}));
-            y.domain([0, d3.max(data, function(d){return +d[yVal];})]);
+            var svg = d3.select("#partTwo").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
 
-            console.log(data);
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleLinear().range([height, 0]);
+
+            // scale the data
+            x.domain(d3.extent(data, getX));
+            y.domain([0, d3.max(data, getY)]);
+
+            svg.append("text")
+                .attr("class", "label")
+                .text(xVal)
+                .attr("x", width + 10)
+                .attr("y", height);
+
+            svg.append("text")
+                .attr("class", "label")
+                .text(yVal)
+                .attr("y", - 10)
+
+            var line = d3.line()
+                .x(getScaledX)
+                .y(getScaledY)
+                .curve(d3.curveMonotoneX)
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("transform", "translate(0, " + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add the Y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            svg.selectAll(".dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "dot")
+                .attr("cx", function(d) { return x(d[xVal]); })
+                .attr("cy", function(d) { return y(d[yVal]); })
+                .attr("r", 4);
+        });
+
+        // Put your part three & four code here ***********************
+        d3.csv("/data/anscombe_III.csv", function(error, data) {
+            if (error) throw error;
+
+            var svg = d3.select("#partThree").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+            // set the ranges
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleLinear().range([height, 0]);
+
+            svg.append("text")
+                .attr("class", "label")
+                .text(xVal)
+                .attr("x", width + 10)
+                .attr("y", height);
+
+            svg.append("text")
+                .attr("class", "label")
+                .text(yVal)
+                .attr("y", - 10)
+
+            // Scale the range of the data
+            x.domain(d3.extent(data, getX));
+            y.domain([0, d3.max(data, getY)]);
 
             var line = d3.line()
                 .x(function(d) { return x(d[xVal]); })
@@ -118,16 +177,123 @@
             svg.append("path")
                 .data([data])
                 .attr("class", "line")
-                .attr("d", line);
+                .attr("d", line)
+                .attr("stroke", "black")
+                .style("fill", "none");
 
+            svg.selectAll(".dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "dot")
+                .attr("cx", function(d) { return x(d[xVal]); })
+                .attr("cy", function(d) { return y(d[yVal]); })
+                .attr("r", 3)
+                .attr('fill', 'black')
+                .on("click", handleClick)
+                .on("mouseover", handleMouseOver)
+                .on("mouseout", handleMouseOut);
+
+            function handleClick(d, i) {
+                $("#scatterLabel").text("x: " + d[xVal] + ", y: " + d[yVal]);
+            }
+
+            var div = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+
+            function handleMouseOver(d, i) {
+                d3.select(this).attr('fill', 'red');
+
+                div.transition()
+                    .duration(50)
+                    .style("opacity", .9);
+                div.html("x: " + d[xVal] + ', y: ' + d[yVal])
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            }
+
+            function handleMouseOut(d, i) {
+                d3.select(this).attr('fill', 'black');
+
+                div.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            }
         });
 
-            
-        
-        // Put your part three & four code here ***********************
-        
+        plotScatterSet(1);
+        plotScatterSet(2);
+        plotScatterSet(3);
+        plotScatterSet(4);
+
         // Put your part five code here ***********************
-        
+        function plotScatterSet(number) {
+            var numeral = 'I';
+            if (number == 2)
+                numeral = 'II';
+            else if (number == 3)
+                numeral = 'III';
+            else if (number == 4)
+                numeral = 'IV';
+
+            d3.csv("/data/anscombe_" + numeral + ".csv", function(error, data) {
+                if (error) throw error;
+
+                var svg = d3.select("#p5_plot_" + number).append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+                var x = d3.scaleLinear().range([0, width]);
+                var y = d3.scaleLinear().range([height, 0]);
+
+                // scale the data
+                x.domain(d3.extent(data, getX));
+                y.domain([0, d3.max(data, getY)]);
+
+                svg.append("text")
+                    .attr("class", "label")
+                    .text(xVal)
+                    .attr("x", width + 10)
+                    .attr("y", height);
+
+                svg.append("text")
+                    .attr("class", "label")
+                    .text(yVal)
+                    .attr("y", - 10)
+
+                // Add the X Axis
+                svg.append("g")
+                    .attr("transform", "translate(0, " + height + ")")
+                    .call(d3.axisBottom(x));
+
+                // Add the Y Axis
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+
+                svg.selectAll(".dot")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("class", "dot")
+                    .attr("cx", function(d) { return x(d[xVal]); })
+                    .attr("cy", function(d) { return y(d[yVal]); })
+                    .attr("r", 4);
+
+                svg.append("text")
+                    .attr("x", (width / 2))             
+                    .attr("y", 0 - (margin.top / 3))
+                    .attr("text-anchor", "middle")  
+                    .style("font-size", "16px") 
+                    .style("text-decoration", "underline")  
+                    .text("Anscombe " + numeral);
+            });
+        }
+
+
     </script>
 </body>
 

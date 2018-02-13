@@ -22,8 +22,17 @@ body {
     cursor: pointer;
 }
 
-/* .line { */
-/*     fill: none; */
-/*     stroke: #ffab00; */
-/*     stroke-width: 3; */
-/* } */
+#scatterplotSet {
+    display: grid;
+    grid-template-rows: 400px 400px;
+    grid-template-columns: 400px 400px;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    color: red;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  pointer-events: none;
+}
