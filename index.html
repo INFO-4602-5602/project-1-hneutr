@@ -1,10 +1,12 @@
 <html>
 <head>
 <title>Project 0</title>
-<style type="text/css" href="project0.css"></style>
+<style type="text/css" href="project1.css"></style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
 <!--Put your D3 import statement between these two lines-->
 </head>
 
@@ -34,33 +36,20 @@
     
     <script type="text/javascript">
         // Put your part one code here ***********************
-        var anscombe_1 = []
-        var anscombe_2 = []
-        var anscombe_3 = []
-        var anscombe_4 = []
-
-        d3.csv("/data/anscombe_I.csv", function(row) {
-            anscombe_1.push(row) 
-        }).then(function(){
-            checkDataset(anscombe_1)
+        d3.csv("/data/anscombe_I.csv", function(data) {
+            checkDataset(data)
         });
 
-        d3.csv("/data/anscombe_II.csv", function(row) {
-            anscombe_2.push(row) 
-        }).then(function(){
-        checkDataset(anscombe_2)
+        d3.csv("/data/anscombe_II.csv", function(data) {
+            checkDataset(data)
         });
 
-        d3.csv("/data/anscombe_III.csv", function(row) { 
-            anscombe_3.push(row)
-        }).then(function(){
-            checkDataset(anscombe_3)
+        d3.csv("/data/anscombe_III.csv", function(data) {
+            checkDataset(data)
         });
 
-        d3.csv("/data/anscombe_IV.csv", function(row) {
-            anscombe_4.push(row)
-        }).then(function(){
-            checkDataset(anscombe_4)
+        d3.csv("/data/anscombe_IV.csv", function(data) {
+            checkDataset(data)
         });
 
         // Leave this to test your data uploading. All data uploading should be above this line
@@ -72,6 +61,68 @@
         }
         
         // Put your part two code here ***********************
+        var xVal = "x"; // Value to plot on x-axis
+        var yVal = "y"; // Value to plot on y-axis
+
+        // set the dimensions and margins of the graph
+        var margin = {top: 20, right: 20, bottom: 30, left: 50};
+        var width = 960 - margin.left - margin.right;
+        var height = 500 - margin.top - margin.bottom;
+
+        var svg = d3.select("#partThree").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+        // set the ranges
+        var x = d3.scaleLinear()
+            .range([0, width]);
+        var y = d3.scaleLinear()
+            .range([height, 0]);
+
+        var xLabel = svg.append("text")
+            .attr("class", "label")
+            .text(xVal)
+            .attr("x", width - 20)
+            .attr("y", height - 10);
+
+        var yLabel = svg.append("text")
+            .attr("class", "label")
+            .text(yVal)
+            .attr("y", - 10)
+
+        d3.csv("/data/anscombe_III.csv", function(error, data) {
+            if (error) throw error;
+
+            // Scale the range of the data
+            x.domain(d3.extent(data, function(d){return +d[xVal];}));
+            y.domain([0, d3.max(data, function(d){return +d[yVal];})]);
+
+            console.log(data);
+
+            var line = d3.line()
+                .x(function(d) { return x(d[xVal]); })
+                .y(function(d) { return y(d[yVal]); })
+                .curve(d3.curveMonotoneX)
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("transform", "translate(0, " + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add the Y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", line);
+
+        });
+
+            
         
         // Put your part three & four code here ***********************
         
